@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Smart Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #141E30, #243B55);
+      color: #fff;
+      margin: 0;
+    }
+
+    .calculator {
+      background: #1f2937;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      width: 340px;
+    }
+
+    .display {
+      background: #111827;
+      color: #00ff9d;
+      font-size: 1.6rem;
+      border: none;
+      outline: none;
+      width: 100%;
+      padding: 15px;
+      text-align: right;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .equal {
+      background: #10b981;
+      grid-column: span 2;
+    }
+
+    .ai-mode {
+      background: #3b82f6;
+      grid-column: span 2;
+    }
+
+    .history {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      background: #111827;
+      padding: 10px;
+      border-radius: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    /* === MUST-USE STYLES === */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 70px);
+      grid-auto-rows: 70px;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      font-size: 1.2rem;
+      border-radius: 15px;
+      background: #374151;
+      color: #fff;
+      transition: transform 0.1s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4b5563;
+      transform: scale(1.05);
+    }
+
+    .display {
+      height: 60px;
+      font-size: 2rem;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <input type="text" id="display" class="display" placeholder="0" />
+
+    <div class="buttons">
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('/')">÷</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('*')">×</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('-')">−</button>
+
+      <button onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="append('+')">+</button>
+      <button onclick="clearDisplay()">C</button>
+
+      <button onclick="backspace()">←</button>
+      <button onclick="append('(')">(</button>
+      <button onclick="append(')')">)</button>
+      <button onclick="append('sqrt(')">√</button>
+
+      <button onclick="append('^')">x²</button>
+      <button class="equal" onclick="calculate()">=</button>
+      <button class="ai-mode" onclick="aiCalculate()">AI Mode 🤖</button>
+    </div>
+
+    <div class="history" id="history"></div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+    let history = document.getElementById('history');
+
+    function append(value) {
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        let result = math.evaluate(display.value);
+        history.innerHTML += `<div>${display.value} = ${result}</div>`;
+        display.value = result;
+      } catch {
+        display.value = 'Invalid Expression';
+      }
+    }
+
+    async function aiCalculate() {
+      let input = prompt("Describe what to calculate (e.g. 'square of 9', 'add 20% of 150')");
+      if (!input) return;
+
+      let processed = input.toLowerCase();
+
+      // Simple AI phrases
+      processed = processed.replace(/square of (\d+(\.\d+)?)/g, '($1)^2');
+      processed = processed.replace(/sqrt of (\d+(\.\d+)?)/g, 'sqrt($1)');
+      processed = processed.replace(/(\d+(\.\d+)?) ?% of (\d+(\.\d+)?)/g, '($1/100)*$3');
+
+      try {
+        let result = math.evaluate(processed);
+        display.value = result;
+        history.innerHTML += `<div>${input} → ${result}</div>`;
+      } catch {
+        display.value = 'Invalid Expression';
+      }
+    }
+  </script>
+
+</body>
+</html>
