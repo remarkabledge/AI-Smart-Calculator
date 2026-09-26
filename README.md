@@ -1,4 +1,4 @@
-<b> AI Smart Calculator <b>
+<b> AI Smart Calculator </b>
 A browser-based calculator built with HTML, CSS, and JavaScript, powered by the math.js library for expression evaluation. It supports standard arithmetic, a quick AI-style natural language mode, and a running calculation history.
 
 Features
